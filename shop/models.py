@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from users.models import User
 # Create your models here.
 class category(models.Model):
     name = models.CharField(max_length=50)
@@ -11,7 +11,7 @@ class Product(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
     price = models.FloatField()
     category = models.ForeignKey(category, on_delete=models.CASCADE, related_name='products')
-    images = models.ImageField(upload_to='images/', blank=True, null=True)
+    images = models.ImageField(blank=True, null=True, upload_to='products/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

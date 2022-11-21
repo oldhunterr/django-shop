@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}
+Home Page
+{% endblock title %}
+
+{% block content %}
+{% comment %} <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Home Page</h1>
+            <p>Home page content goes here.</p>
+        </div>
+    </div> {% endcomment %}
+    <h1>{{user.avatar.url}}</h1>
+    <img src="{{ user.avatar.url }}" />
+
+
+    <img src="/media/avatars/image4_FiIN2lP.png" />
+{% endblock content %}
+
