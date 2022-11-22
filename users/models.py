@@ -22,6 +22,7 @@ def pre_social_login(request, user, **kwargs):
         picture = data[0].get_avatar_url()
         # profile.get_image_from_url(picture)
         profile.get_image_from_url(picture)
+        profile.name = data[0].extra_data['name']
         profile.save()
 
 class UserManager(BaseUserManager):
