@@ -20,7 +20,7 @@
     .avatar-upload {
       position: relative;
       max-width: 205px;
-      margin: 50px auto;
+      margin: 30px auto 50px auto;
     }
     .avatar-upload .avatar-edit {
       position: absolute;
@@ -100,6 +100,10 @@
       color: white !important;
       background-color: #ea4335 !important;
     }
+    .lefte {
+      border-right: 1px solid #C6C7C8;
+      my-4
+    }
 </style>
 {% endblock %}
 {% block content %}
@@ -117,54 +121,63 @@
 </form> {% endcomment %}
 <div class="container">
   <div class="row">
-    <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+    <div class="col-sm-9 col-md-7 col-lg-8 mx-auto">
       <div class="card border-0 shadow rounded-3 my-5">
         <div class="card-body p-4 p-sm-5">
           <h5 class="card-title text-center mb-5 fw-light fs-3">{% trans "Sign Up" %}</h5>
-          <form class="signup" id="signup_form"enctype="multipart/form-data"  method="post" action="{% url 'account_signup' %}">
+          {{ form.errors }}
+          <form class="signup was-validated   " id="signup_form"enctype="multipart/form-data"  method="post" action="{% url 'account_signup' %} ">
             {% csrf_token %}
             {% comment %} {{form.as_p}} {% endcomment %}
-             <div class="form-floating mb-3">
-              {{form.email}}
-              <label for="floatingInput">Email address</label>
-            </div>
-            <div class="form-floating mb-3">
-              {{form.name}}
-              <label for="floatingPassword">Name</label>
-            </div>
-            <div class="form-floating mb-3">
-              {{form.password1}}
-              <label for="floatingPassword">Password</label>
-            </div>
-            <div class="form-floating mb-3">
-              {{form.password2  }}
-              <label for="floatingPassword">Password (again)</label>
-            </div>
-            {% comment %} <div class="mb-3">
-              <label for="formFile" class="form-label">Avatar</label>
-              {{form.avatar}}
-            </div> {% endcomment %}
-            <div class="avatar-upload">
-              <div class="avatar-edit">
-                  {% comment %} <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" /> {% endcomment %}
+             <div class="row">
+              <div class="col-md-6 lefte" >
+                <div class="form-floating mb-3" style="margin-top: 1em">
+                  {{form.email}}
+                  <label for="floatingInput">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                  {{form.name}}
+                  <label for="floatingPassword">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                  {{form.password1}}
+                  <label for="floatingPassword">Password</label>
+                </div>
+                <div class="form-floating mb-3">
+                  {{form.password2  }}
+                  <label for="floatingPassword">Password (again)</label>
+                </div>
+                {% comment %} <div class="mb-3">
+                  <label for="formFile" class="form-label">Avatar</label>
                   {{form.avatar}}
-                  <label for="imageUpload"></label>
+                </div> {% endcomment %} 
               </div>
-              <div class="avatar-preview">
-                  <div id="imagePreview" style="background-image: url(https://www.w3schools.com/howto/img_avatar.png);">
+              <div class="col-md-6">
+                <div class="avatar-upload">
+                  <div class="avatar-edit">
+                      {% comment %} <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" /> {% endcomment %}
+                      {{form.avatar}}
+                      <label for="imageUpload"></label>
+                      {% comment %} <div class="valid-feedback" for="imageUpload">Looking good handsome</div> {% endcomment %}
                   </div>
+                  <div class="avatar-preview">
+                      <div id="imagePreview" style="background-image: url(https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745);">
+                      </div>
+                  </div>
+                </div>
               </div>
-            </div>
-  
-            <div class="d-grid">
-              <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">{% trans "Sign Up" %}</button>
-            </div>
-            <hr class="my-4">
-            <div class="d-grid mb-2">
-              <a {% include "socialaccount/snippets/provider_list.html" with process="login" %} class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
-                <i class="fab fa-google me-2"></i> Sign up with Google
-              </a>
-            </div> 
+             </div>
+             <div class="row" style="margin-top: 1.5em">
+              <div class="d-grid">
+                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">{% trans "Sign Up" %}</button>
+              </div>
+              <hr class="my-4">
+              <div class="d-grid mb-2">
+                <a {% include "socialaccount/snippets/provider_list.html" with process="login" %} class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
+                  <i class="fab fa-google me-2"></i> Sign up with Google
+                </a>
+              </div>
+             </div>
            </form>
         </div>
       </div>

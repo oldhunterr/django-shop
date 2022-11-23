@@ -5,14 +5,21 @@ from .models import *
 
 class SimpleSignupForm(SignupForm):
     name = forms.CharField(max_length=12, label='name', widget=forms.TextInput(attrs={'placeholder': 'name'}))
-    avatar = forms.ImageField(label='avatar', widget=forms.FileInput(attrs={'placeholder': 'avatar'}))
+    avatar = forms.ImageField(label='avatar', required=False, widget=forms.FileInput(attrs={'placeholder': 'avatar', 'value':"avatars/avatar.png"}))
     password1 = PasswordField(label='password1', widget=forms.PasswordInput(attrs={'placeholder': 'password1'}))
     def __init__(self, *args, **kwargs):
         super(SimpleSignupForm, self).__init__(*args, **kwargs)
         self.fields['password1'].widget.attrs.update({'class': 'form-control'})
         self.fields['password2'].widget.attrs.update({'class': 'form-control'})
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
-
+        self.fields['avatar']
+    
+    def clean(self):
+        cleaned_data = super(SignupForm, self).clean()
+        avatar = cleaned_data.get("avatar")
+        if avatar is None:
+            self.add_error("avatar", ("You must upload an image"))
+        return cleaned_data
 
     def save(self, request):
         user = super(SimpleSignupForm, self).save(request)
@@ -21,7 +28,7 @@ class SimpleSignupForm(SignupForm):
         user.save()
         return user
     # email.widget.attrs.update({'class': 'form-control'})
-    avatar.widget.attrs.update({'class': 'file-upload', 'type': 'file', 'id': "imageUpload", 'accept' :".png, .jpg, .jpeg"})
+    avatar.widget.attrs.update({'class': 'form-control file-upload', 'type': 'file', 'id': "imageUpload", 'accept' :".png, .jpg, .jpeg"})
     name.widget.attrs.update({'class': 'form-control'})
     password1.widget.attrs.update({'class': 'form-control'})
 

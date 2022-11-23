@@ -155,7 +155,11 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '6bb5a5b7e7d9ed'
+EMAIL_HOST_PASSWORD = 'de7db3ecfde0b6'
+EMAIL_PORT = '2525'
 # TODO: make seed to change first site and to add new admin user
 
 MEDIA_URL='/media/'
