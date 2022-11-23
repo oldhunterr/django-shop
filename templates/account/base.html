@@ -12,15 +12,18 @@
   <body>
     {% block body %}
     {% include "navbar.html" %}
-    {% if messages %}
-    <div>
-      <strong>Messages:</strong>
-      <ul>
-        {% for message in messages %}
-        <li>{{message}}</li>
-        {% endfor %}
-      </ul>
+    <div class="container">
+      <div>
+        <strong>Messages:</strong>
+          {% for message in messages %}
+          <div class="alert alert-danger">
+            {{ message }}
+          </div>
+          {% endfor %}
+      </div>
     </div>
+    {% if messages %}
+
     {% endif %} 
     {% block content %}
     {% endblock %}
