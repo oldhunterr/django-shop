@@ -80,8 +80,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         img_temp = NamedTemporaryFile(delete=True)
         img_temp.write(urlopen(url).read())
         img_temp.flush()
-        print(self.avatar_url)
-        print(url)
+        # print(self.avatar_url)
+        # print(url)
         if self.avatar_url == url:
           if self.avatar:
             return

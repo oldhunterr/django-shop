@@ -20,7 +20,11 @@
             <li class="nav-item dropdown">
               <div class="profile">
                 <div class="dropdown-toggle" data-bs-toggle="dropdown">
-                  <img class="rounded-circle" id="dropdownMenuButton1" src="{{ user.avatar.url }}" alt="avatar" style="width: 30px; height: 30px;">
+                  {% if user.avatar %}
+                  <img class="rounded-circle" id="dropdownMenuButton1" src="{{ user.avatar.url }}" onerror="this.onerror=null;this.src='media/avatars/avatar.png';" alt="avatar" style="width: 30px; height: 30px;">
+                  {% else %}
+                  <img class="rounded-circle" id="dropdownMenuButton1" src="media/avatars/avatar.png" alt="avatar" style="width: 30px; height: 30px;">
+                  {% endif %}
                   <label for="dropdownMenuButton1">{{user.name}}</label>
                 </div>
 

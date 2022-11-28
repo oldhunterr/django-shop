@@ -1,3 +1,4 @@
+import os
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
@@ -26,7 +27,13 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
     def image_tag(self,obj):
-        return format_html('<img src="{0}" style="width: 45px; height:45px;" />'.format(obj.avatar.url))
+        if obj.avatar:
+            if os.path.isfile(obj.avatar.path):
+                return format_html('<img class="rounded-circle" src="{}" style="width: 50px; height:50px;" />'.format(obj.avatar.url))
+            else:
+                return format_html('<img class="rounded-circle" src="/media/avatars/avatar.png" style="width: 45px; height:45px;" />')
+        else:
+            return format_html('<img class="rounded-circle" src="/media/avatars/avatar.png" style="width: 45px; height:45px;" />')
     list_display = ('email', 'name', 'is_staff','image_tag', 'last_login')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('email','name')
