@@ -22,7 +22,7 @@ class Product(models.Model):
     # condition = models.ForeignKey(product_condition, on_delete=models.CASCADE, related_name='products', null=True)
     description = models.TextField(null=True, blank=True)
     category = models.ForeignKey(category, on_delete=models.CASCADE, related_name='products')
-    images = models.ImageField(blank=True, null=True, upload_to='products/')
+    image = models.ImageField(blank=True, null=True, upload_to='products/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -40,5 +40,11 @@ class Product(models.Model):
             text += categories[i] + " > "
         return text
         return categories[::-1]
+
+class extra_images(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='products/')
+    def __str__(self):
+        return self.product.name
 
 

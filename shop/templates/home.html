@@ -42,7 +42,7 @@ Home Page
             {% for item in page.object_list%}
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="card" style="height: 400px; margin-bottom:10px;">
-                    <img class="card-img-top" src="media/{{item.images}}" alt="Card image cap" style="max-height: 200px">
+                    <img class="card-img-top" src="media/{{item.image}}" alt="Card image cap" style="max-height: 200px">
                     <div class="card-body">
                         <a href="{{item.id}}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
                     </div>
@@ -162,7 +162,7 @@ Home Page
                             filteredProduct.innerHTML +=
                             `<div class="col-xs-12 col-sm-6 col-md-3"> 
                             <div class="card" style="height: 400px; margin-bottom:10px;">
-                                <img class="card-img-top" src="media/${item.images}" alt="Card image cap" style="max-height: 200px">
+                                <img class="card-img-top" src="media/${item.image}" alt="Card image cap" style="max-height: 200px">
                                 <div class="card-body">
                                     <a href="${item.id}" class="stretched-link"><h5 class="card-title">${item.name}</h5></a>
                                 </div>
