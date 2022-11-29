@@ -18,7 +18,7 @@ Home Page
         <div class="row mb-3 p-2">
             <div class="col-md-3">
                 <label for="">Category</label>
-                <select wire:model='byCategory' class="form-control">
+                <select class="form-control" id='categoryField' onchange="search()">
                     <option value="">Please Choose Category</option>
                     {% for category in categories%}
                     <option value="{{category.id}}">{{category.name}}</option>
@@ -26,45 +26,25 @@ Home Page
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="">Search</label>
-                <input type="text" class="form-control" id='searchField' placeholder="Search">
-            </div>
-            <div class="col-md-2">
-            <label for="">Per Page</label>
-            <select class="form-control" wire:model='perPage'>
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-            </div>
-            <div class="col-md-2">
             <label for="">Order By</label>
             <select class="form-control">
                 <option value="created_at" selected>Date</option>
                 <option value="price">price</option>
             </select>
             </div>
-            <div class="col-md-2">
-            <label for="">Sort By</label>
-            <select name="" id="" class="form-control">
-                <option value="asc">ASC</option>
-                <option value="desc">DES</option>
-            </select>
+            <div class="col-md-6">
+                <label for="">Search</label>
+                <input type="text" class="form-control" id='searchField' placeholder="Search">
             </div>
-    
-    
-    
         </div> 
-        <div class="card-deck row">
-            {% if products%}
-            {% for item in products%}
+        <div class="all-product card-deck row">
+            {% if page.object_list %}
+            {% for item in page.object_list%}
             <div class="col-xs-12 col-sm-6 col-md-3">
                 <div class="card" style="height: 400px; margin-bottom:10px;">
                     <img class="card-img-top" src="media/{{item.images}}" alt="Card image cap" style="max-height: 200px">
                     <div class="card-body">
-                        <a href="#" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
+                        <a href="{{item.id}}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
                     </div>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item" style="font-weight: bold">{{item.price}}</li>
@@ -91,32 +71,127 @@ Home Page
                 </div>
             {% endif %}
         </div>
-        {% comment %} {{$posts->links()}} {% endcomment %}
+
+        <div class="filtered-product card-deck row">
+            <div class="replace-filtered">
+                
+            </div>
+        </div>
+        <div class="spinner-grow text-dark d-none" role="status" id="loading-spinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="page-links">
+            {% if page.has_previous %}
+            <a href="?page={{page.previous_page_number}}">Previous</a>
+            {% endif %}
+            {% for i in page.paginator.page_range %}
+            <a href="?page={{i}}">{{i}}</a>
+            {% endfor %}
+            {% if page.has_next %}
+            <a href="?page={{page.next_page_number}}">Next</a>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock content %}
 {% block extra_body%}
 <script>
-    const searchField = document.getElementById('searchField');
-    searchField.addEventListener('keyup', function(){
-        const searchValue = searchField.value;
-        if (searchValue.trim().length > 0) {
-            fetch("/product/search", {
-                body: JSON.stringify({searchText: searchValue}),
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("data", data);
-            })
-            
+    function debounce(callback, delay) {
+        let timeout;
+        return function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(callback, delay);
         }
-    });
+    }
+
+    const allproducts = document.querySelector('.all-product');
+    const filteredProduct = document.querySelector('.filtered-product');
+    const replaceFiltered = document.querySelector('.replace-filtered');
+    const loadingSpinner = document.querySelector("#loading-spinner");
+    const category = document.getElementById("categoryField");
+    const paginate = document.querySelector('.page-links');
+    filteredProduct.style.display = 'none';
+    const searchField = document.getElementById('searchField');
+    // trigger eventlistener after input stops
+    let typingTimer;
+    let doneTyping = 0;
+    const doneTypingInterval = 2000;
+    function search(){
+            const searchValue = searchField.value;
+            const categoryValue = category.value;
+            //if (searchValue.trim().length > 0) {
+                //console.log(categoryValue);
+                //console.log(searchValue);
+                // search debounced to 500ms
+                fetch("/product/search", {
+                    body: JSON.stringify({searchText: searchValue, category: categoryValue}),
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    //console.log("data", data);
+                    // hide filtered product
+                    if (searchValue.trim().length > 0 || categoryValue != "") {
+                        allproducts.style.display = 'none';
+                        loadingSpinner.classList.remove('d-none');
+                        filteredProduct.style.display = 'flex';
+                        paginate.style.display = 'none';
+                    }
+
+                    if (data.length===0)
+                    {
+                        filteredProduct.innerHTML = `<div class="alert" style="display: flex; width:90%">
+                        <div>
+                            <img src="" class="rounded-circle mr-1" alt="Sharon Lessman" height="40">
+                        </div>
+                        <div class="alert alert-danger flex-shrink-1 rounded py-2 px-3 ml-3" style=" width:100%">
+                            <div class="font-weight-bold">Alvis</div>
+                            No Posts Found
+                        </div>`
+                        loadingSpinner.classList.add('d-none');
+                    }
+                    else
+                    {
+                        filteredProduct.innerHTML = '';
+                        data.forEach(item => {
+                            filteredProduct.innerHTML +=
+                            `<div class="col-xs-12 col-sm-6 col-md-3"> 
+                            <div class="card" style="height: 400px; margin-bottom:10px;">
+                                <img class="card-img-top" src="media/${item.images}" alt="Card image cap" style="max-height: 200px">
+                                <div class="card-body">
+                                    <a href="${item.id}" class="stretched-link"><h5 class="card-title">${item.name}</h5></a>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item" style="font-weight: bold">${item.price}</li>
+                                </ul>
+                                <div class="card-body">
+                                    ${item.category}
+                                    <div class="small">
+                                        ${item.created_at}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+                        loadingSpinner.classList.add('d-none');
+                        })
+                    }}
+                )
+                
+            //}
+            if (searchValue.trim().length === 0){
+                console.log('empty');
+                allproducts.style.display = 'flex';
+                paginate.style.display = 'block';
+                filteredProduct.style.display = 'none';
+            }
+        }
+    searchField.addEventListener('keyup', debounce(search, 500));
+
 </script>
 {% endblock extra_body%}
 
