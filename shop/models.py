@@ -43,8 +43,8 @@ class Product(models.Model):
 
 class extra_images(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='products/')
+    img = models.ImageField(upload_to='products/')
     def __str__(self):
         return self.product.name
-
+    # change field name in admin panel
 

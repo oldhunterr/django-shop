@@ -14,9 +14,9 @@
             </li>
         </ul>
         <div>
+          {% if user.is_authenticated %}
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             {% comment %} check if user authenticated {% endcomment %}
-            {% if user.is_authenticated %}
             <li class="nav-item dropdown">
               <div class="profile">
                 <div class="dropdown-toggle" data-bs-toggle="dropdown">

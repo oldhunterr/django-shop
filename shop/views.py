@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from shop.models import Product
 from shop.models import category
+from django.core.files.storage import FileSystemStorage
 import json
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from .forms import *
+
 # Create your views here.
 def search(request):
     print(request)
@@ -36,3 +39,32 @@ def home(request):
 
     # get categories without parents
     return render(request, 'home.html', context)
+
+def add(request):
+    form = ProductForm()
+    form2 = ExtraImagesForm()
+    # form2.fields['extra_images'] = form2.fields['image']
+    # get extra images widgets
+    # form2['extra_images'].field.widget = form2['image'].field.widget
+    # form2['extra_images'].field.label = form2['image'].field.label
+    # del form2.fields['image']
+    if request.method == 'POST':
+        # print(request.POST)
+        form = ProductForm(request.POST, request.FILES)
+        form2 = ExtraImagesForm(request.POST, request.FILES)
+        # print files
+        print(request.FILES.getlist('img'))
+        # check forms are valid
+        if form.is_valid() and form2.is_valid():
+            # save product
+            product = form.save()
+            product.owner_id = request.user.id
+            product.save()
+            print(product)
+            # save extra images
+            for img in request.FILES.getlist('img'):
+                print(img)
+                extra_images.objects.create(img=img, product=product)
+            return JsonResponse({'success': True})
+    context = { 'form': form , 'form2': form2 }
+    return render(request, 'product-add.html', context)

@@ -25,16 +25,20 @@ Home Page
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
             <label for="">Order By</label>
             <select class="form-control">
                 <option value="created_at" selected>Date</option>
                 <option value="price">price</option>
             </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="">Search</label>
                 <input type="text" class="form-control" id='searchField' placeholder="Search">
+            </div>
+            <div class="col-md-3">
+                <label for="">Sell</label>
+                <a href="{% url 'add' %}" class="btn btn-primary form-control"><i class="fa-solid fa-plus"></i> Sell</a>
             </div>
         </div> 
         <div class="all-product card-deck row">

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block head_title %}
+Add Product
+{% endblock head_title %}
+
+{% block extra_head %}
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="container">
+    {% if form.errors or form2.errors%}
+    <script>
+        var delay = alertify.get('notifier','delay');
+        alertify.set('notifier','delay', 10);
+        alertify.set('notifier','delay', delay);
+        function notify(type, message) {
+            alertify.notify(message, type, 5, function(){  console.log('dismissed'); });
+        }
+        {% comment %} setTimeout(function(){ alertify_error('{{ form2.errors|escapejs }}'); }, delay); {% endcomment %}
+    </script>
+    {% comment %} <div class="alert alert-danger"> {% endcomment %}
+        {% if form.errors %}
+        {% comment %} <p>{{ form.errors }}</p> {% endcomment %}
+        <script>
+            notify('error', '{{ form.errors|escapejs }}');
+            {% comment %} alertify.error("{{ form.errors|escapejs }}"); {% endcomment %}
+            {% comment %} alertify_error("{{ form.errors.as_json }}"); {% endcomment %}
+        </script>
+        {% endif %}
+        {% if form2.errors %}
+        {% for error in form2.errors.items %}
+        {% comment %} <p>{{ error }}</p> {% endcomment %}
+        {% endfor %}
+        <script>
+            notify('error', "{{ form2.errors|escapejs }}");
+            {% comment %} alertify.error("{{ form2.errors|escapejs }}"); {% endcomment %}
+        </script>
+        {% endif %}
+    {% comment %} </div> {% endcomment %}
+    {% endif %}
+    {% comment %} check forms errors {% endcomment %}
+
+
+{% comment %} add from {% endcomment %}
+
+<form class="form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form__field">
+        <label for="formInput#text">{{field.label}}</label>
+        {{field}}
+    </div>
+    {% endfor %}
+    {% for field in form2 %}
+    <div class="form__field">
+        <label for="formInput#text">{{field.label}}</label>
+        {{field}}
+    </div>
+    {% endfor %}
+    <input type="submit" name="" id="">
+</form>
+</div>
+{% endblock content %}
+
+{% block extra_body %}
+<script>
+
+    {% comment %} alertify.set('notifier','position', 'top-left'); {% endcomment %}
+    // purse error from form2
+</script>
+{% endblock extra_body %}
