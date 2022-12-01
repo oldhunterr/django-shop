@@ -14,16 +14,16 @@
             </li>
         </ul>
         <div>
-          {% if user.is_authenticated %}
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if user.is_authenticated %}
             {% comment %} check if user authenticated {% endcomment %}
             <li class="nav-item dropdown">
               <div class="profile">
                 <div class="dropdown-toggle" data-bs-toggle="dropdown">
                   {% if user.avatar %}
-                  <img class="rounded-circle" id="dropdownMenuButton1" src="{{ user.avatar.url }}" onerror="this.onerror=null;this.src='media/avatars/avatar.png';" alt="avatar" style="width: 30px; height: 30px;">
+                  <img class="rounded-circle" id="dropdownMenuButton1" src="{{ user.avatar.url }}" onerror="this.onerror=null;this.src='/media/avatars/avatar.png';" alt="avatar" style="width: 30px; height: 30px;">
                   {% else %}
-                  <img class="rounded-circle" id="dropdownMenuButton1" src="media/avatars/avatar.png" alt="avatar" style="width: 30px; height: 30px;">
+                  <img class="rounded-circle" id="dropdownMenuButton1" src="/media/avatars/avatar.png" alt="avatar" style="width: 30px; height: 30px;">
                   {% endif %}
                   <label for="dropdownMenuButton1">{{user.name}}</label>
                 </div>
@@ -35,14 +35,14 @@
               </div>
             </li>
                 
-            {% else %}
+          {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'account_login' %}">Login</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
             </li>
-            {% endif %}
+          {% endif %}
             </ul>
         </div>
         </div>
