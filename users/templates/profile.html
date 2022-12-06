@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}
+Profile Page
+{% endblock title %}
+{% block extra_head %}
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+
+{% endblock extra_head %}
+{% block content %}
+<div class="container-xl px-4 mt-4">
+{% if form.errors%}
+    <script>
+        var delay = alertify.get('notifier','delay');
+        alertify.set('notifier','delay', 10);
+        alertify.set('notifier','delay', delay);
+        function notify(type, message) {
+            alertify.notify(message, type, 5, function(){  console.log('dismissed'); });
+        }
+    </script>
+        {% if form.errors %}
+        <script>
+            notify('error', '{{ form.errors|escapejs }}');
+        </script>
+        {% endif %}
+{% endif %}
+    <!-- Account page navigation-->
+<form action="{% url 'profile' %}" method="POST" enctype="multipart/form-data" >
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-xl-4">
+            <!-- Profile picture card-->
+            <div class="card mb-4 mb-xl-0" style="min-height:20rem">
+                <div class="card-header">Profile Picture</div>
+                <div class="card-body text-center">
+                    <!-- Profile picture image-->
+                    {% if user.avatar %}
+                    <img class="img-account-profile rounded-circle mb-2" id="imgPreview" src="{{ user.avatar.url }}" alt="avatar" style="max-height:10rem; min-width: 160px;">
+                    {% else %}
+                    <img class="img-account-profile rounded-circle mb-2" id="imgPreview" src="/media/avatars/avatar.png" alt="avatar" style="max-height:10rem; min-width: 160px;">
+                    {% endif %}
+                    <!-- Profile picture help block-->
+                    <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                    <label class="btn btn-primary" for="photo">
+                        {{form.avatar}}
+                        {% comment %} <input id="photo" type="file" class="d-none" accept=".png, .jpg, .jpeg" name="avatar"> {% endcomment %}
+                        Upload Image
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <!-- Account details card-->
+            <div class="card mb-4" style="min-height:20rem">
+                <div class="card-header">Account Details</div>
+                <div class="card-body">
+                    
+                        <!-- Form Group (username)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="inputname">Name (how your name will appear to other users on the site)</label>
+                            {{form.name}}
+                        </div>
+                        <!-- Form Group (email address)-->
+                        <!--Check if user is sign in using django allauth-->
+                        {% if user.socialaccount_set.all %}
+                        <div class="mb-3">
+                            <i class='small'>Password Cannot be changed Because you used {{user.socialaccount_set.all.0.provider}} to SignUp</i>
+                        </div>
+                        {% else %}
+                        <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Password</label>
+                            <div class="col-sm-10">
+                              {{form.password1}}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="inputPassword3" class="col-sm-2 col-form-label">Password confirm</label>
+                            <div class="col-sm-10">
+                              {{form.password2}}
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!-- Save changes button-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-primary" type="submit">Save Changes</button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+    <hr>
+    <div class="row">
+        <h2>MY Products</h2>
+        {% for item in user.products.all %}
+        <div class="col-xs-12 col-sm-6 col-md-3">
+            <div class="card" style="height: 440px; margin-bottom:10px;"" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
+                <img src="media/{{item.image}}" class="card-img-top" alt="..." style="max-height: 200px">
+                <div class="card-body">
+                    <a href="{{item.id}}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">{{item.price}}</li>
+                  <li class="list-group-item">{{item.category}}</li>
+                  <li class="list-group-item small">{{item.created_at}}</li>
+                </ul>
+                <div class="card-body">
+                    <a href="#" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
+                </div>
+              </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content%} 
+{% block extra_body %}
+<script>
+    $(document).ready(()=>{
+        $('#photo').change(function(){
+        const file = this.files[0];
+        console.log(file);
+        if (file){
+        let reader = new FileReader();
+        reader.onload = function(event){
+        console.log(event.target.result);
+        $('#imgPreview').attr('src', event.target.result);
+        }
+        reader.readAsDataURL(file);
+        }
+        });
+        });
+</script>
+{% endblock extra_body %}
