@@ -40,7 +40,7 @@ def home(request):
     # get categories without parents
     return render(request, 'home.html', context)
 
-def add(request):
+def create(request):
 
     form = ProductForm()
     form2 = ExtraImagesForm()
@@ -70,7 +70,7 @@ def add(request):
     context = { 'form': form , 'form2': form2 }
     return render(request, 'product-add.html', context)
 
-def productview(request, id):
+def show(request, id):
     product = Product.objects.get(id=id)
     extra_images = product.images.all()
     print(extra_images)

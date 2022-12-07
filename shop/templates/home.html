@@ -45,7 +45,7 @@ Home Page
             {% if page.object_list %}
             {% for item in page.object_list%}
             <div class="col-xs-12 col-sm-6 col-md-3">
-                <div class="card" style="height: 400px; margin-bottom:10px;">
+                <div class="card" style="height: 400px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
                     <img class="card-img-top" src="media/{{item.image}}" alt="Card image cap" style="max-height: 200px">
                     <div class="card-body">
                         <a href="{% url 'productview' item.id %}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
@@ -165,7 +165,7 @@ Home Page
                         data.forEach(item => {
                             filteredProduct.innerHTML +=
                             `<div class="col-xs-12 col-sm-6 col-md-3"> 
-                            <div class="card" style="height: 400px; margin-bottom:10px;">
+                            <div class="card" style="height: 400px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="${item.description}">
                                 <img class="card-img-top" src="media/${item.image}" alt="Card image cap" style="max-height: 200px">
                                 <div class="card-body">
                                     <a href="${item.id}" class="stretched-link"><h5 class="card-title">${item.name}</h5></a>
@@ -182,6 +182,7 @@ Home Page
                             </div>
                         </div>`
                         loadingSpinner.classList.add('d-none');
+                        $('[data-toggle="tooltip"]').tooltip();
                         })
                     }}
                 )
