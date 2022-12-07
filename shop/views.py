@@ -41,6 +41,7 @@ def home(request):
     return render(request, 'home.html', context)
 
 def add(request):
+
     form = ProductForm()
     form2 = ExtraImagesForm()
     # form2.fields['extra_images'] = form2.fields['image']
@@ -68,3 +69,13 @@ def add(request):
             return JsonResponse({'success': True})
     context = { 'form': form , 'form2': form2 }
     return render(request, 'product-add.html', context)
+
+def productview(request, id):
+    product = Product.objects.get(id=id)
+    extra_images = product.images.all()
+    print(extra_images)
+    context = {
+        'product': product,
+        'extra_images': extra_images
+    }
+    return render(request, 'product_view.html', context)

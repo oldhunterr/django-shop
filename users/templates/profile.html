@@ -99,7 +99,7 @@ Profile Page
             <div class="card" style="height: 440px; margin-bottom:10px;"" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
                 <img src="media/{{item.image}}" class="card-img-top" alt="..." style="max-height: 200px">
                 <div class="card-body">
-                    <a href="{{item.id}}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
+                    <a href="{% url 'productview' item.id %}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
                 </div>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">{{item.price}}</li>

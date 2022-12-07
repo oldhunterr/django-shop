@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block extra_head %}{% endblock extra_head %}
+{% block content %}
+{{product.name}}
+{{product.description}}
+{{product.price}}
+{{product.category}}
+<img src="/media/{{product.image}}" alt="">
+{% for img in extra_images %}
+<img src="/media/{{img.img}}" alt="">
+<br>
+{% endfor %}
+
+
+{% endblock %}
+{% block extra_body %}{% endblock extra_body %}
