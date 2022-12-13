@@ -24,6 +24,21 @@ Profile Page
         </script>
         {% endif %}
 {% endif %}
+{% if messages %}
+    <script>
+        var delay = alertify.get('notifier','delay');
+        alertify.set('notifier','delay', 10);
+        alertify.set('notifier','delay', delay);
+        function notify(type, message) {
+            alertify.notify(message, type, 5, function(){  console.log('dismissed'); });
+        }
+    </script>
+    {% for message in messages %}
+    <script>
+        notify('{{ message.tags }}', '{{ message }}');
+    </script>
+    {% endfor %}
+    {% endif %}
     <!-- Account page navigation-->
 <form action="{% url 'profile' %}" method="POST" enctype="multipart/form-data" >
     {% csrf_token %}
@@ -93,7 +108,16 @@ Profile Page
 </form>
     <hr>
     <div class="row">
-        <h2>MY Products</h2>
+            <div style=margin-bottom:1em ;>
+            <label for="">Status</label>
+            <select class="form-control" id='status' onchange="filterProducts()">
+                <option value="">Please Choose Status</option>
+                {% for st in status%}
+                <option value="{{st.id}}">{{st.name}}</option>
+                {% endfor %}
+            </select>
+            </div>
+        <div class="product_all card-deck row">
         {% for item in user.products.all %}
         <div class="col-xs-12 col-sm-6 col-md-3">
             <div class="card" style="height: 440px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
@@ -107,18 +131,23 @@ Profile Page
                   <li class="list-group-item small">{{item.created_at}}</li>
                 </ul>
                 <div class="card-body">
-                    <a href="#" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
+                    <a href="{% url 'edit' item.id %}" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
                 </div>
               </div>
         </div>
         {% endfor %}
+        </div>
+        <div class="product_filtered col-xs-12 col-sm-6 col-md-3">
+
+        </div>
     </div>
 </div>
 {% endblock content%} 
 {% block extra_body %}
 <script>
-    $(function () 
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
+    }
     )
     $(document).ready(()=>{
         $('#photo').change(function(){
@@ -134,5 +163,64 @@ Profile Page
         }
         });
         });
+    // filter product ajax
+    const status = document.getElementById("status");
+</script>
+<script>
+    function filterProducts(){
+        const status_value = document.getElementById("status").value;
+        const all_products = document.querySelector('.product_all');
+        const filtered_products = document.querySelector('.product_filtered');
+        filtered_products.style.display = "none";
+        console.log(status_value);
+        fetch("/product/filter", {
+            body: JSON.stringify({status: status_value}),
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            all_products.style.display = "none";
+            filtered_products.style.display = "block";
+            if (data.length===0)
+            {
+                filtered_products.innerHTML = `
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="/media/system/bot.gif" class="rounded-circle mr-1" alt="Sharon Lessman" height="40">
+                    </div>
+                <div class="alert alert-danger col-md-2 rounded py-2 px-3 ml-3" style=" width:100%">
+                    <div class="font-weight-bold">Alvis</div>
+                    No Posts Found
+                </div>
+                </div>`
+            }
+            else
+            {
+                filtered_products.innerHTML = '';
+                data.forEach(item => {
+                    filtered_products.innerHTML +=
+                    `<div class="card" style="height: 440px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="${item.description}">
+                        <img src="media/${item.image}" class="card-img-top" alt="..." style="max-height: 200px">
+                        <div class="card-body">
+                            <a href="/product/${item.id}" class="stretched-link"><h5 class="card-title">${item.name}</h5></a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">${item.price}</li>
+                          <li class="list-group-item">${item.category}</li>
+                          <li class="list-group-item small">${item.created_at}</li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="/product/${item.id}/edit" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
+                        </div>
+                      </div>`;
+                $('[data-toggle="tooltip"]').tooltip();
+                })
+            }});
+    }
 </script>
 {% endblock extra_body %}

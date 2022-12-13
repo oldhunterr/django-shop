@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from shop.models import Product
 from shop.models import category
 from django.core.files.storage import FileSystemStorage
@@ -6,6 +6,9 @@ import json
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from .forms import *
+from django.contrib import messages
+from django.utils.encoding import force_text
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
 def search(request):
@@ -26,6 +29,14 @@ def search(request):
         product['category'] = category.objects.get(id=product['category_id']).name
     # return render(request, 'ajax_search.html', {'products': products})
     return JsonResponse(list(data), safe=False)
+
+def product_filter(request):
+    if request.method == 'POST':
+        status = json.loads(request.body).get('status')
+        print(status)
+        products = Product.objects.filter(status=status, owner=request.user)
+        data = products.values()
+        return JsonResponse(list(data), safe=False)
 def home(request):
     products = Product.objects.all()
     paginator = Paginator(products, 20)
@@ -79,3 +90,55 @@ def show(request, id):
         'extra_images': extra_images
     }
     return render(request, 'product_view.html', context)
+
+def edit(request, id):
+    product = Product.objects.get(id=id)
+    if product.owner_id != request.user.id:
+        # raise forbidden
+        raise PermissionDenied('You are not allowed to edit this product')
+    form = ProductForm(initial={'name': product.name, 'description': product.description, 'price': product.price, 'category': product.category, 'status': product.status, 'condition': product.condition})
+    form2 = ExtraImagesForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        form2 = ExtraImagesForm(request.POST, request.FILES)
+        print(request.FILES)
+        if form.is_valid() and form2.is_valid():
+            deleted_images = request.POST.getlist('checkbox')
+            if deleted_images:
+                for image in deleted_images:
+                    img = extra_images.objects.get(id=image)
+                    if img.img:
+                        img.img.delete()
+                    img.delete()
+            for img in request.FILES.getlist('img'):
+                extra_images.objects.create(img=img, product=product)
+            # update product
+            product.name = form.cleaned_data['name']
+            product.description = form.cleaned_data['description']
+            product.price = form.cleaned_data['price']
+            product.category = form.cleaned_data['category']
+            product.status = form.cleaned_data['status']
+            product.condition = form.cleaned_data['condition']
+            if request.FILES.get('image'):
+                # delete old image
+                print('yes i have image')
+                product.image.delete()
+                product.image = request.FILES.get('image')
+            product.save()
+            # redirect back to product view
+            messages.success(request, 'Form submission successful')
+            return redirect('edit', id=product.id)
+
+    context = {'product': product, 'form': form, 'form2': form2}
+    return render(request, 'product-edit.html', context)
+def delete(request, id):
+    # delete product and extra images
+    extra = extra_images.objects.filter(product_id=id)
+    for img in extra:
+        img.img.delete()
+    product = Product.objects.get(id=id)
+    name = product.name
+    product.image.delete()
+    product.delete()
+    messages.success(request, 'Product '+name+' deleted successfully')
+    return redirect('profile')
