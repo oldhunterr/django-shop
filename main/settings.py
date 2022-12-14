@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'users',
     'shop',
+    'chat',
     'metadata',
     'allauth',
     'allauth.account',
