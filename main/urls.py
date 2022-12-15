@@ -9,6 +9,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('shop.urls')),
     path('', include('users.urls')),
+    path('chat/', include('chat.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 handler403 = 'main.views.handler403'
