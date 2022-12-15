@@ -1,1 +1,6 @@
 venv/
+main\__pycache__\
+chat\__pycache__\
+metadata\__pycache__\
+shop\__pycache__\
+user\__pycache__\

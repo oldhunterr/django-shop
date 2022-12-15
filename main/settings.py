@@ -84,7 +84,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 WSGI_APPLICATION = 'main.wsgi.application'
-ASGI_APPLICATION = "main.asgi.application"  
+ASGI_APPLICATION = "main.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
