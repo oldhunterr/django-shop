@@ -1,3 +1,4 @@
+import random
 from django.contrib.auth import get_user_model
 from django.db import models
 from shop.models import Product
@@ -19,7 +20,7 @@ class Message(models.Model):
 
 class Room(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(max_length=255, unique=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
     product = models.ForeignKey(Product, related_name='product', on_delete=models.CASCADE)
     member1 = models.ForeignKey(User, related_name='member1', on_delete=models.CASCADE)
     member2 = models.ForeignKey(User, related_name='member2', on_delete=models.CASCADE)
@@ -36,9 +37,26 @@ class Room(models.Model):
         if user == self.member1:
             return self.member2
         return self.member1
+    # get messages in the room
+    def get_messages(self):
+        return Message.objects.filter(room=self).order_by('-timestamp')
+    # check if the slug is used
+    def check_slug(self, slug):
+        if Room.objects.filter(slug=slug).exists():
+            if Room.objects.filter(slug=slug).first() == self:
+                return False
+            return True
+        return False
     # save to change the slug
     def save(self, *args, **kwargs):
-        if not self.id:
+        # check if slug is used
+        print('slug', self.slug)
+        if not self.slug or self.slug == None:
             self.slug = slugify("chat-"+self.member1.name +"-"+ self.member2.name+"-"+self.product.name)
+        if self.check_slug(self.slug):
+            # update slug
+            self.slug = slugify(self.slug+"-"+str(random.randint(1000, 9999)))
         super(Room, self).save(*args, **kwargs)
-    
+        # check if both users are not the same
+        if self.member1 == self.member2:
+            raise ValueError("Both users can't be the same")
