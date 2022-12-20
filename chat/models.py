@@ -19,7 +19,7 @@ class Message(models.Model):
         return Message.objects.order_by('-timestamp').filter(room=self)[:10]
 
 class Room(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=False, null=True, blank=True, default='chat')
     slug = models.SlugField(max_length=255, unique=True, null=True, blank=True)
     product = models.ForeignKey(Product, related_name='product', on_delete=models.CASCADE)
     member1 = models.ForeignKey(User, related_name='member1', on_delete=models.CASCADE)
@@ -47,6 +47,12 @@ class Room(models.Model):
                 return False
             return True
         return False
+    def check_name(self, name):
+        if Room.objects.filter(name=name).exists():
+            if Room.objects.filter(name=name).first() == self:
+                return False
+            return True
+        return False
     # save to change the slug
     def save(self, *args, **kwargs):
         # check if slug is used
@@ -59,6 +65,10 @@ class Room(models.Model):
         if self.check_slug(self.slug):
             # update slug
             self.slug = slugify(self.slug+"_"+str(random.randint(1000, 9999)))
+        # check if name is used
+        if self.check_name(self.name):
+            # update name
+            self.name = self.name+"_"+str(random.randint(1000, 9999))
         super(Room, self).save(*args, **kwargs)
         # check if both users are not the same
         if self.member1 == self.member2:
