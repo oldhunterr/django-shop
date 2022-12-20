@@ -115,6 +115,7 @@
     var roomName = {{ room_name_json }};
     var username = {{ username }};
     var userId = {{ user_id }};
+    var roomId = {{ room_id }};
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
@@ -144,21 +145,22 @@
             document.querySelector('#chat-message-submit').click();
         }
     };
-
+    
     document.querySelector('#chat-message-submit').onclick = function(e) {
         var messageInputDom = document.getElementById('chat-message-input');
         var message = messageInputDom.value;
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': message,
-            'from': userId
+            'from': userId,
+            'room': roomId
         }));
 
         messageInputDom.value = '';
     };
 
     function fetchMessages() {
-      chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
+      chatSocket.send(JSON.stringify({'command': 'fetch_messages', 'room': roomId }));
     }
 
     function createMessage(data) {

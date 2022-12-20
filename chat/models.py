@@ -14,9 +14,9 @@ class Message(models.Model):
 
     def __str__(self):
         return self.author.name
-    # get the last 10 messages
-    def last_10_messages():
-        return Message.objects.order_by('-timestamp').all()[:10]
+    # get the last 10 messages from room
+    def last_10_messages(self):
+        return Message.objects.order_by('-timestamp').filter(room=self)[:10]
 
 class Room(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -52,10 +52,13 @@ class Room(models.Model):
         # check if slug is used
         print('slug', self.slug)
         if not self.slug or self.slug == None:
-            self.slug = slugify("chat-"+self.member1.name +"-"+ self.member2.name+"-"+self.product.name)
+            self.slug = slugify("chat_"+self.member1.name +"_"+ self.member2.name+"_"+self.product.name)
+            # relpace - with _ Because - is not allowed in url for websocket
+            self.slug = self.slug.replace("-", "_")
+
         if self.check_slug(self.slug):
             # update slug
-            self.slug = slugify(self.slug+"-"+str(random.randint(1000, 9999)))
+            self.slug = slugify(self.slug+"_"+str(random.randint(1000, 9999)))
         super(Room, self).save(*args, **kwargs)
         # check if both users are not the same
         if self.member1 == self.member2:

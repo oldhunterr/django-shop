@@ -13,8 +13,7 @@ def index(request):
 def room(request, room_name):
     # check room if exist
     if not Room.objects.filter(slug=room_name).exists():
-        # if not exist, raise 404
-        raise Http404("Room does not exist")
+        raise Http404('message: Room does not exist')
     # check if user is in the room
     room = Room.objects.get(slug=room_name)
     if not room.check_user(request.user):
@@ -24,4 +23,5 @@ def room(request, room_name):
         'room_name_json': mark_safe(json.dumps(room_name)),
         'username': mark_safe(json.dumps(request.user.name)),
         'user_id': mark_safe(json.dumps(request.user.id)),
+        'room_id': mark_safe(json.dumps(room.id)),
     })
