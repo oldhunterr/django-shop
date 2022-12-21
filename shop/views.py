@@ -84,7 +84,6 @@ def create(request):
 def show(request, id):
     product = Product.objects.get(id=id)
     extra_images = product.images.all()
-    print(extra_images)
     context = {
         'product': product,
         'extra_images': extra_images
