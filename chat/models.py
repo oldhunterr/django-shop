@@ -40,6 +40,9 @@ class Room(models.Model):
     # get messages in the room
     def get_messages(self):
         return Message.objects.filter(room=self).order_by('-timestamp')
+    # get last message in the room
+    def get_last_message(self):
+        return Message.objects.filter(room=self).order_by('-timestamp').first()
     # check if the slug is used
     def check_slug(self, slug):
         if Room.objects.filter(slug=slug).exists():

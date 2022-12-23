@@ -1,7 +1,8 @@
-{% extends 'base.html' %}
 {% load static %}
-{% block extra_head %}
-<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
     <script src="https://use.typekit.net/hoy3lrg.js"></script>
     <script>try{Typekit.load({ async: true });}catch(e){}</script>
     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
@@ -9,22 +10,36 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    {% comment %} <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> {% endcomment %}
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <link rel="stylesheet" href="{% static 'style.css' %}" />
-{% endblock extra_head %}
-{% block content %}
-<div id="frame">
+  </head>
+
+<body>
+  <div id="frame">
     <div id="sidepanel">
       <div id="profile">
         <div class="wrap">
-          {% if request.user.avatar %}
-          <img id="profile-img" class='online' src="{{ user.avatar.url }}" onerror="this.onerror=null;this.src='/media/avatars/avatar.png';">
-          {% else %}
-          <img id="profile-img" class='online' src="/media/avatars/avatar.png" >
-          {% endif %}
-          <p>{{request.user.name}}</p>
+          <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+          <p>Mike Ross</p>
+          <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+          <div id="status-options">
+            <ul>
+              <li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
+              <li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
+              <li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
+              <li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
+            </ul>
+          </div>
+          <div id="expanded">
+            <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+            <input name="twitter" type="text" value="mikeross" />
+            <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+            <input name="twitter" type="text" value="ross81" />
+            <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+            <input name="twitter" type="text" value="mike.ross" />
+          </div>
         </div>
       </div>
       <div id="search">
@@ -33,35 +48,42 @@
       </div>
       <div id="contacts">
         <ul>
-          {% for room in rooms %}
-          <a href="{% url 'room' room.slug %}">
-            <li class="contact {% if currentroom.id == room.id %} active {% endif %}">
-              <div class="wrap">
-                <span class="contact-status busy"></span>
-                {% if room.product.image %}
-                <img src="/media/{{ room.product.image }}" onerror="this.onerror=null;this.src='/media/avatars/avatar.png';">
-                {% else %}
-                <img src="/media/avatars/avatar.png" >
-                {% endif %}
-                <div class="meta">
-                  <p class="name">{{room.product.name}} </p>
-                  <p class="preview">{{room.get_last_message}}</p>
-                </div>
+          <li class="contact">
+            <div class="wrap">
+              <span class="contact-status online"></span>
+              <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+              <div class="meta">
+                <p class="name">Louis Litt</p>
+                <p class="preview">You just got LITT up, Mike.</p>
               </div>
-            </li>
-          </a>
-          {% endfor %}
+            </div>
+          </li>
+          <li class="contact active">
+            <div class="wrap">
+              <span class="contact-status busy"></span>
+              <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+              <div class="meta">
+                <p class="name">Harvey Specter</p>
+                <p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
+              </div>
+            </div>
+          </li>
         </ul>
+      </div>
+      <div id="bottom-bar">
+        <button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
+        <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
       </div>
     </div>
     <div class="content">
       <div class="contact-profile">
-        {% if second_user.avatar %}
-        <img src="{{ second_user.avatar.url }}" onerror="this.onerror=null;this.src='/media/avatars/avatar.png';">
-        {% else %}
-        <img src="/media/avatars/avatar.png" >
-        {% endif %}
-        <p>{{ second_user.name }}: {{currentroom.product.name}}</p>
+        <img src="/media/{{avatar}}" alt="" />
+        <p>{{ username }}</p>
+        <div class="social-media">
+          <i class="fa fa-facebook" aria-hidden="true"></i>
+          <i class="fa fa-twitter" aria-hidden="true"></i>
+          <i class="fa fa-instagram" aria-hidden="true"></i>
+        </div>
       </div>
       <div class="messages">
         <ul id="chat-log">
@@ -78,6 +100,7 @@
       <div class="message-input">
         <div class="wrap">
         <input id="chat-message-input" type="text" placeholder="Write your message..." />
+        <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
         <button id="chat-message-submit" class="submit">
           <i class="fa fa-paper-plane" aria-hidden="true"></i>
         </button>
@@ -85,8 +108,7 @@
       </div>
     </div>
   </div>
-{% endblock content %}
-{% block extra_body %}
+
 <script src="{% static 'main.js' %}"></script>
 <script src="{% static 'reconnecting-websocket.js' %}"></script>
 <script>
@@ -94,11 +116,6 @@
     var username = {{ username }};
     var userId = {{ user_id }};
     var roomId = {{ room_id }};
-
-    // change #frame height to fit screen and subtract it from the navbar height
-    var navbarHeight = document.getElementById("bootstrap-navbar").offsetHeight;
-    var frameHeight = window.innerHeight - navbarHeight;
-    document.getElementById("frame").style.height = frameHeight + "px";
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
@@ -151,12 +168,12 @@
       var msgListTag = document.createElement('li');
       var imgTag = document.createElement('img');
       var pTag = document.createElement('p');
-      pTag.textContent = data.content;      
+      pTag.textContent = data.content;
+      imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
+      
       if (author === userId) {
-        imgTag.src = '{{ request.user.avatar.url }}';
         msgListTag.className = 'sent';
       } else {
-        imgTag.src = '{{ currentroom.product.owner.avatar.url }}';
         msgListTag.className = 'replies';
       }
       msgListTag.appendChild(imgTag);
@@ -165,4 +182,6 @@
     }
 
 </script>
-{% endblock extra_body %}
+</body>
+
+</html>

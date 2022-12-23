@@ -1,7 +1,7 @@
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
   min-height: 100vh;
   background: #27ae60;
   font-family: "proxima-nova", "Source Sans Pro", sans-serif;
@@ -16,7 +16,8 @@ body {
 #frame {
   width: 100%;
   min-width: 360px;
-  height: 100vh;
+  /* calculate height by subtracting navbar height */
+  height: calc(100vh - 60px);
   min-height: 300px;
   background: #E6EAEA;
 }
@@ -616,9 +617,8 @@ body {
   font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
   float: left;
   border: none;
-  width: calc(100% - 90px);
-  padding: 11px 32px 10px 8px;
-  font-size: 1.8em;
+  width: calc(100% - 50px);
+  padding: 17px 32px 10px 8px;
   color: #32465a;
 }
 @media screen and (max-width: 735px) {

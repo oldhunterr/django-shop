@@ -21,12 +21,17 @@ def room(request, room_name):
     room = Room.objects.get(slug=room_name)
     if not room.check_user(request.user):
         raise PermissionDenied("You are not in the room")
+    # get all rooms of user
+    rooms = Room.objects.filter(member1_id=request.user.id) | Room.objects.filter(member2_id=request.user.id)
     return render(request, 'chat/room.html', {
         'avatar': request.user.avatar,
         'room_name_json': mark_safe(json.dumps(room_name)),
         'username': mark_safe(json.dumps(request.user.name)),
         'user_id': mark_safe(json.dumps(request.user.id)),
         'room_id': mark_safe(json.dumps(room.id)),
+        'currentroom': room,
+        'second_user': room.get_second_user(request.user),
+        'rooms': rooms,
     })
 def create(request):
     if request.method == 'POST':
