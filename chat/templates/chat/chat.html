@@ -86,7 +86,19 @@
     var username = {{ username }};
     var userId = {{ user_id }};
     var roomId = {{ room_id }};
+    
+    // update height when window resize
+    window.addEventListener("resize", function() {
+        updateHeight();
+    });
+    // update height when window load
+    window.addEventListener("load", function() {
+        updateHeight();
+    });
 
+    // create function updateHeight
+    function updateHeight() {
+    console.log("updateHeight")
     // change #frame height to fit screen and subtract it from the navbar height
     var navbarHeight = document.getElementById("bootstrap-navbar").offsetHeight;
     var frameHeight = window.innerHeight - navbarHeight;
@@ -97,7 +109,7 @@
     var contactProfileHeight = document.getElementsByClassName("contact-profile")[0].offsetHeight;
     var messagesHeight = frameHeight - messageInputHeight - contactProfileHeight;
     document.getElementsByClassName("messages")[0].style.height = messagesHeight + "px";
-    
+    }
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
