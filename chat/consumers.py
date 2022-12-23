@@ -10,6 +10,8 @@ class ChatConsumer(WebsocketConsumer):
     # fetch messages from room
     def fetch_messages(self, data):
         messages = Message.last_10_messages(data['room'])
+        # reverse the messages variable
+        messages = messages[::-1]
         print(data['room'])
         content = {
             'command': 'messages',

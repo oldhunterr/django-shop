@@ -16,7 +16,7 @@ class Message(models.Model):
         return self.author.name
     # get the last 10 messages from room
     def last_10_messages(self):
-        return Message.objects.order_by('-timestamp').filter(room=self)[:10]
+        return Message.objects.order_by('-timestamp').filter(room=self)
 
 class Room(models.Model):
     name = models.CharField(max_length=255, unique=False, null=True, blank=True, default='chat')

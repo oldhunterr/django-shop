@@ -503,7 +503,7 @@ body {
 @media screen and (max-width: 735px) {
   #frame .content {
     width: calc(100% - 100px);
-    min-width: 300px !important;
+    /* min-width: 300px !important; */
   }
 }
 @media screen and (min-width: 900px) {
@@ -542,8 +542,8 @@ body {
 }
 #frame .content .messages {
   height: auto;
-  min-height: calc(100% - 93px);
-  max-height: calc(100% - 93px);
+  /* min-height: calc(100% - 93px);
+  max-height: calc(100% - 93px); */
   overflow-y: scroll;
   overflow-x: hidden;
   width: 100%;
@@ -623,7 +623,7 @@ body {
 }
 @media screen and (max-width: 735px) {
   #frame .content .message-input .wrap input {
-    padding: 15px 32px 16px 8px;
+    padding: 27px 32px 16px 8px;
   }
 }
 #frame .content .message-input .wrap input:focus {

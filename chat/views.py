@@ -9,8 +9,20 @@ import json
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
 def index(request):
-    return render(request, 'chat/index.html', {})
+        rooms = Room.objects.filter(member1_id=request.user.id) | Room.objects.filter(member2_id=request.user.id)
+        currentroom = rooms.first()
+        return render(request, 'chat/chat.html', {
+        'avatar': request.user.avatar,
+        'room_name_json': mark_safe(json.dumps(currentroom.slug)),
+        'username': mark_safe(json.dumps(request.user.name)),
+        'user_id': mark_safe(json.dumps(request.user.id)),
+        'room_id': mark_safe(json.dumps(currentroom.id)),
+        'currentroom': currentroom,
+        'second_user': currentroom.get_second_user(request.user),
+        'rooms': rooms,
+    })
 
 @login_required
 def room(request, room_name):
