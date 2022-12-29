@@ -29,6 +29,13 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    # make indexes for search
+    class Meta:
+        indexes = [
+            models.Index(fields=['name', 'description'] , name='text_index')
+        ]
+
     def all_categories(self):
         categories = []
         current_category = self.category
@@ -47,5 +54,4 @@ class extra_images(models.Model):
     img = models.ImageField(upload_to='products/')
     def __str__(self):
         return self.product.name
-    # change field name in admin panel
 

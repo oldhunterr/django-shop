@@ -27,9 +27,10 @@ Home Page
             </div>
             <div class="col-md-2">
             <label for="">Order By</label>
-            <select class="form-control">
-                <option value="created_at" selected>Date</option>
-                <option value="price">price</option>
+            <select class="form-control" id='orderField' onchange='search()'>
+                <option value="" selected>Sort by</option>
+                <option value="price_asc">Price Low To High</option>
+                <option value="price_desc">Price High To Low</option>
             </select>
             </div>
             <div class="col-md-4">
@@ -85,15 +86,29 @@ Home Page
             <span class="visually-hidden">Loading...</span>
         </div>
         <div class="page-links">
-            {% if page.has_previous %}
-            <a href="?page={{page.previous_page_number}}">Previous</a>
-            {% endif %}
-            {% for i in page.paginator.page_range %}
-            <a href="?page={{i}}">{{i}}</a>
-            {% endfor %}
-            {% if page.has_next %}
-            <a href="?page={{page.next_page_number}}">Next</a>
-            {% endif %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  {% if page.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page.previous_page_number }}&search={{search}}&category={{category}}&sort={{sort}}" aria-label="Previous">
+                      Previous
+                    </a>
+                  </li>
+                  {% endif %}
+                  {% for i in page.paginator.page_range %}
+                  <li class="page-item {% if page.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}&search={{search}}&category={{category}}&sort={{sort}}">{{ i }}</a>
+                  </li>
+                  {% endfor %}
+                  {% if page.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page.next_page_number }}&search={{search}}&category={{category}}&sort={{sort}}" aria-label="Next">
+                      Next
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+            </nav>              
         </div>
     </div>
 </div>
@@ -113,6 +128,7 @@ Home Page
     const replaceFiltered = document.querySelector('.replace-filtered');
     const loadingSpinner = document.querySelector("#loading-spinner");
     const category = document.getElementById("categoryField");
+    const order = document.getElementById("orderField");
     const paginate = document.querySelector('.page-links');
     filteredProduct.style.display = 'none';
     const searchField = document.getElementById('searchField');
@@ -123,12 +139,10 @@ Home Page
     function search(){
             const searchValue = searchField.value;
             const categoryValue = category.value;
-            //if (searchValue.trim().length > 0) {
-                //console.log(categoryValue);
-                //console.log(searchValue);
-                // search debounced to 500ms
+            const orderValue = order.value;
+
                 fetch("/product/search", {
-                    body: JSON.stringify({searchText: searchValue, category: categoryValue}),
+                    body: JSON.stringify({searchText: searchValue, category: categoryValue, sort: orderValue}),
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -138,9 +152,7 @@ Home Page
                 })
                 .then(response => response.json())
                 .then(data => {
-                    //console.log("data", data);
-                    // hide filtered product
-                    if (searchValue.trim().length > 0 || categoryValue != "") {
+                    if (searchValue.trim().length > 0 || categoryValue != "" || orderValue != "") {
                         allproducts.style.display = 'none';
                         loadingSpinner.classList.remove('d-none');
                         filteredProduct.style.display = 'flex';

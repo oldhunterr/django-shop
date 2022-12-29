@@ -65,6 +65,20 @@
       </div>
       <div class="messages">
         <ul id="chat-log">
+          <li>
+            <div class="row" style='display: flex; justify-content: center;'>
+              <div class="col-lg-2 justify-content-center text-center">
+                <img src="/media/{{currentroom.product.image}}" / style="border-radius: 0; width: 5rem">
+              </div>
+              <div class="col-lg-8">
+                {{currentroom.product.name}}
+                <br>
+                {{currentroom.product.description|slice:":220"}}
+                <br>
+                {{currentroom.product.price}} BD
+              </div>
+            </div>
+          </li>          
         </ul>
       </div>
       <div class="message-input">
@@ -143,6 +157,9 @@
     document.querySelector('#chat-message-submit').onclick = function(e) {
         var messageInputDom = document.getElementById('chat-message-input');
         var message = messageInputDom.value;
+        if (message === '') {
+          return;
+      }
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': message,

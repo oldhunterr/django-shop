@@ -10,9 +10,16 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+@login_required
 def index(request):
         rooms = Room.objects.filter(member1_id=request.user.id) | Room.objects.filter(member2_id=request.user.id)
         currentroom = rooms.first()
+        print(currentroom)
+        if not currentroom:
+            print('no room')
+            return render(request, 'chat/chat.html', {
+            'avatar': request.user.avatar,
+            })
         return render(request, 'chat/chat.html', {
         'avatar': request.user.avatar,
         'room_name_json': mark_safe(json.dumps(currentroom.slug)),

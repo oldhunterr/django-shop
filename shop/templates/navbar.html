@@ -17,6 +17,9 @@
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           {% if user.is_authenticated %}
             {% comment %} check if user authenticated {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'chat-index' %}"><i class="fa fa-comments" style="bottom: 5px;position: relative;"></i></a>
+            </li>
             <li class="nav-item dropdown">
               <div class="profile">
                 <div class="dropdown-toggle" data-bs-toggle="dropdown">
