@@ -13,6 +13,8 @@ from metadata.models import product_status
 from django.contrib import messages
 from django.utils.encoding import force_text
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 # def search(request):
@@ -143,8 +145,8 @@ def home(request):
     # get categories without parents
     return render(request, 'home.html', context)
 
+@login_required
 def create(request):
-
     form = ProductForm()
     form2 = ExtraImagesForm()
     # form2.fields['extra_images'] = form2.fields['image']
@@ -176,6 +178,9 @@ def create(request):
 
 def show(request, id):
     product = Product.objects.get(id=id)
+    # check if product is active
+    if product.status_id != 1:
+        raise PermissionDenied('This product is not active')
     extra_images = product.images.all()
     context = {
         'product': product,
@@ -224,6 +229,7 @@ def show(request, id):
 #     context = {'product': product, 'form': form, 'form2': form2}
 #     return render(request, 'product-edit.html', context)
 
+@login_required
 def edit(request, id):
     # Get the product or raise a 404 error if it does not exist
     product = get_object_or_404(Product, id=id)
@@ -266,6 +272,7 @@ def edit(request, id):
     context = {'product': product, 'form': form, 'form2': form2}
     return render(request, 'product-edit.html', context)
 
+@login_required
 def delete(request, id):
     product = Product.objects.get(id=id)
     if product.owner_id != request.user.id:
