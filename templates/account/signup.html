@@ -1,0 +1,224 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block extra_head %}
+<style>
+        
+    h1 {
+      font-size: 20px;
+      text-align: center;
+      margin: 20px 0 20px;
+    }
+    h1 small {
+      display: block;
+      font-size: 15px;
+      padding-top: 8px;
+      color: gray;
+    }
+    .avatar-upload {
+      position: relative;
+      max-width: 205px;
+      margin: 30px auto 50px auto;
+    }
+    .avatar-upload .avatar-edit {
+      position: absolute;
+      right: 12px;
+      z-index: 1;
+      top: 10px;
+    }
+    .avatar-upload .avatar-edit input {
+      display: none;
+    }
+    .avatar-upload .avatar-edit input + label {
+      display: inline-block;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 0;
+      border-radius: 100%;
+      background: #FFFFFF;
+      border: 1px solid transparent;
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      font-weight: normal;
+      transition: all 0.2s ease-in-out;
+    }
+    .avatar-upload .avatar-edit input + label:hover {
+      background: #f1f1f1;
+      border-color: #d6d6d6;
+    }
+    .avatar-upload .avatar-edit input + label:after {
+      content: "\f040";
+      font-family: 'FontAwesome';
+      color: #757575;
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      margin: auto;
+    }
+    .avatar-upload .avatar-preview {
+      width: 192px;
+      height: 192px;
+      position: relative;
+      border-radius: 100%;
+      border: 6px solid #F8F8F8;
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    }
+    .avatar-upload .avatar-preview > div {
+      width: 100%;
+      height: 100%;
+      border-radius: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+     .container2 .btn {
+        position: absolute;
+        top: 90%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+      
+        color: white;
+        font-size: 16px;
+    
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        text-align: center;
+    }
+    .btn-login {
+      font-size: 0.9rem;
+      letter-spacing: 0.05rem;
+      padding: 0.75rem 1rem;
+    }
+    
+    .btn-google {
+      color: white !important;
+      background-color: #ea4335 !important;
+    }
+    .lefte {
+      border-right: 1px solid #C6C7C8;
+      my-4
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% comment %} <h1>{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+</form> {% endcomment %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-9 col-md-7 col-lg-8 mx-auto">
+      <div class="card border-0 shadow rounded-3 my-5">
+        <div class="card-body p-4 p-sm-5">
+          <h5 class="card-title text-center mb-5 fw-light fs-3">{% trans "Sign Up" %}</h5>
+          {{ form.errors }}
+          <form class="signup" id="signup_form"enctype="multipart/form-data"  method="post" action="{% url 'account_signup' %} ">
+            {% csrf_token %}
+            {% comment %} {{form.as_p}} {% endcomment %}
+             <div class="row">
+              <div class="col-md-6 lefte" >
+                <div class="form-floating mb-3" style="margin-top: 1em">
+                  {{form.email}}
+                  <label for="floatingInput">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                  {{form.name}}
+                  <label for="floatingPassword">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                  {{form.password1}}
+                  <label for="floatingPassword">Password</label>
+                </div>
+                <div class="form-floating mb-3">
+                  {{form.password2}}
+                  <label for="floatingPassword">Password (again)</label>
+                </div>
+                {% comment %} <div class="mb-3">
+                  <label for="formFile" class="form-label">Avatar</label>
+                  {{form.avatar}}
+                </div> {% endcomment %} 
+              </div>
+              <div class="col-md-6">
+                <div class="avatar-upload">
+                  <div class="avatar-edit">
+                      {% comment %} <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" /> {% endcomment %}
+                      {{form.avatar}}
+                      <label for="imageUpload"></label>
+                      {% comment %} <div class="valid-feedback" for="imageUpload">Looking good handsome</div> {% endcomment %}
+                  </div>
+                  <div class="avatar-preview">
+                      <div id="imagePreview" style="background-image: url(https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745);">
+                      </div>
+                  </div>
+                </div>
+              </div>
+             </div>
+             <div class="row" style="margin-top: 1.5em">
+              <div class="d-grid">
+                <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">{% trans "Sign Up" %}</button>
+              </div>
+              <hr class="my-4">
+              <div class="d-grid mb-2">
+                <a {% include "socialaccount/snippets/provider_list.html" with process="login" %} class="btn btn-google btn-login text-uppercase fw-bold" type="submit">
+                  <i class="fab fa-google me-2"></i> Sign up with Google
+                </a>
+              </div>
+             </div>
+           </form>
+        </div>
+      </div>
+    </div>
+  </div> 
+{% comment %} <h1>{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<form class="signup" id="signup_form" method="post" enctype="multipart/form-data" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+</form>
+
+</div> {% endcomment %}
+
+{% block extra_body %}
+<script>
+  $(document).ready(function () {
+      function readURL(input) {
+          if (input.files && input.files[0]) {
+              var reader = new FileReader();
+
+              reader.onload = function (e) {
+                  $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+                  $('#imagePreview').hide();
+                  $('#imagePreview').fadeIn(650);
+              }
+              reader.readAsDataURL(input.files[0]);
+          }
+      }
+      $("#imageUpload").change(function () {
+          readURL(this);
+      });
+  });
+</script>
+{% endblock extra_body %}
+
+{% endblock %}

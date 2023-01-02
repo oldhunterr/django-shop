@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Home Page
+{% endblock title %}
+{% block extra_head%}
+<style>
+    .card:hover{ 
+         box-shadow: 1px 8px 20px grey;
+         cursor: pointer;
+        -webkit-transition:  box-shadow .2s ease-in;
+      }
+</style>
+{% endblock extra_head%}
+{% block content %}
+<div class="container">
+    <div>
+        <div class="row mb-3 p-2">
+            <div class="col-md-3">
+                <label for="">Category</label>
+                <select class="form-control" id='categoryField' onchange="search()">
+                    <option value="">Please Choose Category</option>
+                    {% for category in categories%}
+                    <option value="{{category.id}}">{{category.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+            <label for="">Order By</label>
+            <select class="form-control" id='orderField' onchange='search()'>
+                <option value="" selected>Sort by</option>
+                <option value="price_asc">Price Low To High</option>
+                <option value="price_desc">Price High To Low</option>
+            </select>
+            </div>
+            <div class="col-md-4">
+                <label for="">Search</label>
+                <input type="text" class="form-control" id='searchField' placeholder="Search">
+            </div>
+            <div class="col-md-3">
+                <label for="">Sell</label>
+                <a href="{% url 'add' %}" class="btn btn-primary form-control"><i class="fa-solid fa-plus"></i> Sell</a>
+            </div>
+        </div> 
+        <div class="all-product card-deck row">
+            {% if page.object_list %}
+            {% for item in page.object_list%}
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="card" style="height: 400px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
+                    <img class="card-img-top" src="media/{{item.image}}" alt="Card image cap" style="max-height: 200px">
+                    <div class="card-body">
+                        <a href="{% url 'productview' item.id %}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" style="font-weight: bold">{{item.price}}</li>
+                    </ul>
+                    <div class="card-body">
+                        {{item.category}}
+                        <div class="small">
+                            {{item.created_at}}
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+                <div class="alert" style="display: flex; width:90%">
+                    <div>
+                        <img src="" class="rounded-circle mr-1" alt="Sharon Lessman" height="40">
+                    </div>
+                    <div class="alert alert-danger flex-shrink-1 rounded py-2 px-3 ml-3" style=" width:100%">
+                        <div class="font-weight-bold">Alvis</div>
+                        No Posts Found
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="filtered-product card-deck row">
+            <div class="replace-filtered">
+                
+            </div>
+        </div>
+        <div class="spinner-grow text-dark d-none" role="status" id="loading-spinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="page-links">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  {% if page.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page.previous_page_number }}&search={{search}}&category={{category}}&sort={{sort}}" aria-label="Previous">
+                      Previous
+                    </a>
+                  </li>
+                  {% endif %}
+                  {% for i in page.paginator.page_range %}
+                  <li class="page-item {% if page.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}&search={{search}}&category={{category}}&sort={{sort}}">{{ i }}</a>
+                  </li>
+                  {% endfor %}
+                  {% if page.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page.next_page_number }}&search={{search}}&category={{category}}&sort={{sort}}" aria-label="Next">
+                      Next
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+            </nav>              
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% block extra_body%}
+<script>
+    function debounce(callback, delay) {
+        let timeout;
+        return function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(callback, delay);
+        }
+    }
+
+    const allproducts = document.querySelector('.all-product');
+    const filteredProduct = document.querySelector('.filtered-product');
+    const replaceFiltered = document.querySelector('.replace-filtered');
+    const loadingSpinner = document.querySelector("#loading-spinner");
+    const category = document.getElementById("categoryField");
+    const order = document.getElementById("orderField");
+    const paginate = document.querySelector('.page-links');
+    filteredProduct.style.display = 'none';
+    const searchField = document.getElementById('searchField');
+    // trigger eventlistener after input stops
+    let typingTimer;
+    let doneTyping = 0;
+    const doneTypingInterval = 2000;
+    function search(){
+            const searchValue = searchField.value;
+            const categoryValue = category.value;
+            const orderValue = order.value;
+
+                fetch("/product/search", {
+                    body: JSON.stringify({searchText: searchValue, category: categoryValue, sort: orderValue}),
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (searchValue.trim().length > 0 || categoryValue != "" || orderValue != "") {
+                        allproducts.style.display = 'none';
+                        loadingSpinner.classList.remove('d-none');
+                        filteredProduct.style.display = 'flex';
+                        paginate.style.display = 'none';
+                    }
+
+                    if (data.length===0)
+                    {
+                        filteredProduct.innerHTML = `<div class="alert" style="display: flex; width:90%">
+                        <div>
+                            <img src="/media/system/bot.gif" class="rounded-circle mr-1" alt="Sharon Lessman" height="40">
+                        </div>
+                        <div class="alert alert-danger flex-shrink-1 rounded py-2 px-3 ml-3" style=" width:100%">
+                            <div class="font-weight-bold">Alvis</div>
+                            No Posts Found
+                        </div>`
+                        loadingSpinner.classList.add('d-none');
+                    }
+                    else
+                    {
+                        filteredProduct.innerHTML = '';
+                        data.forEach(item => {
+                            filteredProduct.innerHTML +=
+                            `<div class="col-xs-12 col-sm-6 col-md-3"> 
+                            <div class="card" style="height: 400px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="${item.description}">
+                                <img class="card-img-top" src="media/${item.image}" alt="Card image cap" style="max-height: 200px">
+                                <div class="card-body">
+                                    <a href="/product/${item.id}" class="stretched-link"><h5 class="card-title">${item.name}</h5></a>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item" style="font-weight: bold">${item.price}</li>
+                                </ul>
+                                <div class="card-body">
+                                    ${item.category}
+                                    <div class="small">
+                                        ${item.created_at}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+                        loadingSpinner.classList.add('d-none');
+                        $('[data-toggle="tooltip"]').tooltip();
+                        })
+                    }}
+                )
+                
+            //}
+            if (searchValue.trim().length === 0){
+                console.log('empty');
+                allproducts.style.display = 'flex';
+                paginate.style.display = 'block';
+                filteredProduct.style.display = 'none';
+            }
+        }
+    searchField.addEventListener('keyup', debounce(search, 500));
+
+</script>
+{% endblock extra_body%}
+

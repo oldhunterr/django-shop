@@ -1,0 +1,56 @@
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light" id='bootstrap-navbar'>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Django Shop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+        </ul>
+        <div>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% if user.is_authenticated %}
+            {% comment %} check if user authenticated {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'chat-index' %}"><i class="fa fa-comments" style="bottom: 5px;position: relative;"></i></a>
+            </li>
+            <li class="nav-item dropdown">
+              <div class="profile">
+                <div class="dropdown-toggle" data-bs-toggle="dropdown">
+                  {% if user.avatar %}
+                  <img class="rounded-circle" id="dropdownMenuButton1" src="{{ user.avatar.url }}" onerror="this.onerror=null;this.src='/media/avatars/avatar.png';" alt="avatar" style="width: 30px; height: 30px;">
+                  {% else %}
+                  <img class="rounded-circle" id="dropdownMenuButton1" src="/media/avatars/avatar.png" alt="avatar" style="width: 30px; height: 30px;">
+                  {% endif %}
+                  <label for="dropdownMenuButton1">{{user.name}}</label>
+                </div>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-cog"></i> Profile</a></li>
+                  <li><a class="dropdown-item" href="{% url 'chat-index' %}"><i class="fas fa-comments"></i> Chats</a></li>
+                  {% if user.is_superuser  %}
+                  <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="fas fa-crown"></i> Admin Panel</a></li>
+                  {% endif %}
+                  <li><a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fas fa-sign-out"></i> Logout</a></li>
+                  {% comment %} check if user is admin {% endcomment %}
+
+                </ul>
+              </div>
+            </li>
+                
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
+            </li>
+          {% endif %}
+            </ul>
+        </div>
+        </div>
+    </div>
+</nav>
