@@ -133,7 +133,7 @@ def home(request):
     status = product_status.objects.get(name='Active')
     products = products.filter(status_id=status.id)
     products = products.order_by('-created_at')
-    paginator = Paginator(products, 10)
+    paginator = Paginator(products, 5)
     categories = category.objects.filter(parent=None)
     page = paginator.get_page(request.GET.get('page'))
     context = {

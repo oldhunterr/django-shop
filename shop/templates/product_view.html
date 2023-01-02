@@ -111,6 +111,8 @@
           <p class="product-description mb-3">{{product.description}}</p>
           <h4 class="product-price mb-3">Price: {{product.price}}</h4>
           <h4 class="product-category mb-3">Category: {{product.category}}</h4>
+          <h4 class="product-category mb-3">Condition: {{product.condition}}</h4>
+          <h4 class="product-category mb-3">Owner: {{product.owner.name}}</h4>
           {% if product.owner != request.user %}
             <form method="post" action="{% url 'create_chat_room' %}" class="mb-3">
               {% csrf_token %}
