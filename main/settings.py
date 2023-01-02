@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'users',
     'shop',
+    'chat',
     'metadata',
     'allauth',
     'allauth.account',
@@ -82,7 +84,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 WSGI_APPLICATION = 'main.wsgi.application'
-
+ASGI_APPLICATION = "main.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -155,6 +162,9 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 SITE_ID = 1
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None

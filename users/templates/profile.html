@@ -52,13 +52,13 @@ Profile Page
                     {% if user.avatar %}
                     <img class="img-account-profile rounded-circle mb-2" id="imgPreview" src="{{ user.avatar.url }}" alt="avatar" style="max-height:10rem; min-width: 160px;">
                     {% else %}
-                    <img class="img-account-profile rounded-circle mb-2" id="imgPreview" src="/media/avatars/avatar.png" alt="avatar" style="max-height:10rem; min-width: 160px;">
+                    <img class="img-account-profile rounded-circle mb-2" id="imgPreview" src="/media/avatars/no_avatar.jpg" alt="avatar" style="max-height:10rem; min-width: 160px;">
                     {% endif %}
                     <!-- Profile picture help block-->
                     <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                     <label class="btn btn-primary" for="photo">
                         {{form.avatar}}
-                        {% comment %} <input id="photo" type="file" class="d-none" accept=".png, .jpg, .jpeg" name="avatar"> {% endcomment %}
+                        {% comment %} <input id="photo" type="file" class="d-none" accept=".png, .jpg, .jpeg" name="avatar" value='{{user.avatar.url}}'> {% endcomment %}
                         Upload Image
                     </label>
                 </div>

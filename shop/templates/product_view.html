@@ -1,8 +1,212 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ title }}{% endblock %}
-{% block extra_head %}{% endblock extra_head %}
+{% block extra_head %}
+<link type="text/css" rel="stylesheet" href="{% static 'css/lightslider.css' %}" />                  
+<script src="{% static 'js/lightslider.js' %}"></script>
+<style>
+    .demo {
+        min-width:5rem;
+        margin: 2em 2em 0;
+    }
+    #lightSlider {
+        list-style: none outside none;
+        padding-left: 0;
+        margin-bottom:0;
+        min-height: 3em;
+    }
+    #lightSlider li {
+        display: block;
+        float: left;
+        cursor:pointer;
+    }
+    #lightSlider img {
+        display: block;
+        max-height: 300px;
+    }
+    
+    .lSSlideOuter .lSPager.lSGallery li {
+        opacity: 0.5;
+    }
+    
+    .lSSlideOuter .lSPager.lSGallery li.active {
+        opacity: 1;
+    }
+    
+    lSSlideOuter .lSPager.lSGallery li.active, .lSSlideOuter .lSPager.lSGallery li{
+      border-radius: 0;
+    }
+    
+    lSSlideOuter .lSPager.lSGallery li.active:hover, .lSSlideOuter .lSPager.lSGallery li:hover {
+      border-radius: 0;
+    }
+    
+    .lSSlideOuter .lSPager.lSGallery img {
+        display: block;
+        height: 64px;
+        max-width: 100%;
+    }
+    .preferredHeight {
+        max-height: 127px;
+        position: relative;
+        left: 50%;
+        transform: translate(-50%);
+      }
+      .product-details {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+      }
+      .product-name {
+        color: #343a40;
+        font-size: 36px;
+        font-weight: bold;
+      }
+      .product-description {
+        color: #6c757d;
+        font-size: 18px;
+      }
+      .product-price {
+        color: #17a2b8;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .product-category {
+        color: #6c757d;
+        font-size: 18px;
+      }
+      .create-chat-room-btn {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: #fff;
+      }
+      .edit-product-btn {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+      }
+      
+      
+</style>
+{% endblock extra_head %}
 {% block content %}
-{{product.name}}
+<div class="container">
+    <div class="row" style='margin-top: 1rem'>
+        <div class="col-md-6">
+            <div class="demo">
+                <ul id="lightSlider">
+                    <li data-thumb="/media/{{product.image}}">
+                        <img src="/media/{{product.image}}" id='slideimage'/>
+                    </li>
+                    {% for img in extra_images %}
+                    <li data-thumb="/media/{{img.img}}">
+                        <img src="/media/{{img.img}}" id='slideimage'/>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6 product-details">
+          <h1 class="product-name mb-3">{{product.name}}</h1>
+          <p class="product-description mb-3">{{product.description}}</p>
+          <h4 class="product-price mb-3">Price: {{product.price}}</h4>
+          <h4 class="product-category mb-3">Category: {{product.category}}</h4>
+          <h4 class="product-category mb-3">Condition: {{product.condition}}</h4>
+          <h4 class="product-category mb-3">Owner: {{product.owner.name}}</h4>
+          {% if product.owner != request.user %}
+            <form method="post" action="{% url 'create_chat_room' %}" class="mb-3">
+              {% csrf_token %}
+              <input type="hidden" name="user_2" value="{{ product.owner.id }}">
+              <input type="hidden" name="product" value="{{ product.id }}">
+              <button type="submit" class="btn btn-primary create-chat-room-btn">Create Chat Room</button>
+            </form>
+          {% else %}
+            <a href="{% url 'edit' product.id %}" class="btn btn-secondary edit-product-btn">Edit Product</a>
+          {% endif %}
+        </div>
+    </div>
+</div>
+
+    <script>
+        $ = jQuery;
+$( document ).ready(function() {
+  
+  $h_slider_options =  {
+      gallery: true,
+      item: 1,
+      loop:true,
+      auto: true,
+      pauseOnHover: true,
+      adaptiveHeight: true,
+      slideMargin: 0,
+      thumbItem: 6,
+      galleryMargin: 10,
+      thumbMargin: 10,
+      responsive : [
+        {
+            breakpoint:1200,
+            settings: {
+              thumbItem: 3
+            }
+        },
+        {
+            breakpoint:1000,
+            settings: {
+              thumbItem: 2
+            }
+        },
+        {
+          breakpoint:800,
+          settings: {
+            thumbItem: 2
+          }
+        },
+        {
+          breakpoint:480,
+          settings: {
+            thumbItem: 1
+          }
+        }
+      ],
+      onSliderLoad: function() {
+        // get all images with id slideimage
+        var images = document.querySelectorAll('#slideimage');
+        // add class preferredHeight to all images
+        images.forEach(function(image) {
+          image.classList.add('preferredHeight');
+        });
+      }
+      }; 
+
+  h_slider = $('#lightSlider').lightSlider($h_slider_options);
+
+  /* Fancybox & lightSlider Sync - Bug Fix */
+  $selector = '#lightSlider li:not(".clone") a';
+  $selector += ',#lightSliderVertical li:not(".clone") a';
+  $().fancybox({
+    selector : $selector,
+    backFocus : false, //The most important options for sync bug fix
+    buttons : [ 
+      'slideShow',
+      'share',
+      'zoom',
+      'fullScreen',
+      'thumbs',
+      'download',
+      'close'
+    ]
+  });
+});
+
+// #RESIZE BUG FIXING
+// # if slider have height in % or vh,
+// # on resize rebuild
+$( window ).resize(function() {
+    slider.destroy();
+    h_slider = $('#ocassions-slider').lightSlider(h_slider_options);
+});
+    </script>
+{% comment %} {{product.name}}
 {{product.description}}
 {{product.price}}
 {{product.category}}
@@ -10,7 +214,7 @@
 {% for img in extra_images %}
 <img src="/media/{{img.img}}" alt="">
 <br>
-{% endfor %}
+{% endfor %} {% endcomment %}
 
 
 {% endblock %}

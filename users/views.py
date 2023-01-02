@@ -20,7 +20,9 @@ def profile(request):
                 print(form.cleaned_data)
                 user = request.user
                 user.name = form.cleaned_data['name']
-                user.avatar = form.cleaned_data['avatar']
+                # if avatar is not avatars/avatar.png
+                if form.cleaned_data['avatar'] != 'avatars/no_avatar.jpg':
+                    user.avatar = form.cleaned_data['avatar']
                 if form.cleaned_data['password1'] and form.cleaned_data['password2']:
                     user.set_password(form.cleaned_data['password1'])
                 user.save()
