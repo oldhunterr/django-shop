@@ -1,42 +1,72 @@
-Django Shop
+# Django Shop
 
 Django Shop is a web application that allows users to create their own online store and sell their products online. The application was built using the Django framework and utilizes a variety of features such as authentication, CRUD operations, and websockets.
-Getting Started
+
+## Getting Started
 
 To get started with Django Shop, follow these steps:
+#### Prerequisites
 
-    Clone the repository:
+    Python 3.11
+    Virtualenv (optional)
 
-git clone https://github.com/oldhunterr/django-shop.git
+## Installing
 
-    Navigate to the project directory:
+Clone the repository:
 
-cd django-shop
+`git clone https://github.com/oldhunterr/django-shop.git`
 
-    Install the necessary packages:
+Navigate to the project directory:
 
-pip install -r requirements.txt
+`cd django-shop`
 
-    Run the Django migrations:
+Create and activate a virtual environment (optional)
 
-python manage.py migrate
+`virtualenv env`
 
-    Run the development server:
+Linux - Activate
 
-python manage.py runserver
+`source env/bin/activate`
 
-    Open your web browser and navigate to http://localhost:8000 to view the application.
+Windows - Activate
 
-Features
+`env/Scripts/Activate`
 
-    User authentication and registration
-    CRUD operations for products
-    Real-time chat functionality using websockets
-    Responsive design using Bootstrap
+Install the necessary packages:
 
-Contributing
+`pip install -r requirements.txt`
 
+Run the Django migrations:
+
+`python manage.py migrate`
+
+Run the development server:
+
+`python manage.py runserver`
+
+Open your web browser and navigate to http://localhost:8000 to view the application.
+
+## Features
+- User authentication and registration
+- Product creation, updating and deleting by the owner
+- Chat functionality between users on a product
+- Realtime message updates using WebSockets
+- Product search functionality
+-  Responsive and user-friendly GUI using Bootstrap
+
+## Usage
+
+- Navigate to the home page and register or login to your account
+- View all available products or add a new product from the dashboard
+- View, update, or delete your products from the dashboard
+- Click on a product to view the details and start a chat with the owner
+- View all your chat rooms and messages in the chat rooms page
+- Use the input field to send new messages in a chat room
+
+### Contributing
+------------
 If you would like to contribute to Django Shop, please create a pull request with a detailed description of your changes.
-Author
 
-Sayed Ali Alawi - oldhunterr
+### License
+
+Django Shop is licensed under the MIT License.
