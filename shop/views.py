@@ -171,16 +171,18 @@ def create(request):
             for img in request.FILES.getlist('img'):
                 print(img)
                 extra_images.objects.create(img=img, product=product)
-            return JsonResponse({'success': True})
+
+            messages.success(request, 'Product Created successfully')
+            return redirect('productview', id=product.id)
     context = { 'form': form , 'form2': form2 }
     return render(request, 'product-add.html', context)
-
 
 def show(request, id):
     product = Product.objects.get(id=id)
     # check if product is active
-    if product.status_id != 1:
-        raise PermissionDenied('This product is not active')
+    if product.owner != request.user:
+        if product.status_id != 1:
+            raise PermissionDenied('This product is not active')
     extra_images = product.images.all()
     context = {
         'product': product,
@@ -265,7 +267,7 @@ def edit(request, id):
                 product.image.delete()
                 product.image = request.FILES.get('image')
             product.save()
-            # Redirect back to
+            # Redirect back
             messages.success(request, 'Form submission successful')
             return redirect('edit', id=product.id)
 

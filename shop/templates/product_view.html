@@ -118,7 +118,7 @@
               {% csrf_token %}
               <input type="hidden" name="user_2" value="{{ product.owner.id }}">
               <input type="hidden" name="product" value="{{ product.id }}">
-              <button type="submit" class="btn btn-primary create-chat-room-btn">Create Chat Room</button>
+              <button type="submit" class="btn btn-primary create-chat-room-btn">Start Chat</button>
             </form>
           {% else %}
             <a href="{% url 'edit' product.id %}" class="btn btn-secondary edit-product-btn">Edit Product</a>
