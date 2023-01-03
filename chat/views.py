@@ -52,6 +52,8 @@ def room(request, room_name):
         'second_user': room.get_second_user(request.user),
         'rooms': rooms,
     })
+    
+@login_required
 def create(request):
     if request.method == 'POST':
         # get product from post
