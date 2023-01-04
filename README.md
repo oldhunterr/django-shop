@@ -36,6 +36,12 @@ Install the necessary packages:
 
 `pip install -r requirements.txt`
 
+Restore the database
+
+`mongorestore -d <database_name> <directory_backup>`
+
+`mongorestore -d django-shop C:\Users\alooy\Downloads\database\django-shop`
+
 Run the Django migrations:
 
 `python manage.py migrate`
