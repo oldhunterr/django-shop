@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.utils.encoding import force_text
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
+from PIL import Image
 
 
 # Create your views here.
@@ -133,7 +134,7 @@ def home(request):
     status = product_status.objects.get(name='Active')
     products = products.filter(status_id=status.id)
     products = products.order_by('-created_at')
-    paginator = Paginator(products, 5)
+    paginator = Paginator(products, 10)
     categories = category.objects.filter(parent=None)
     page = paginator.get_page(request.GET.get('page'))
     context = {
@@ -251,7 +252,19 @@ def edit(request, id):
             if deleted_images:
                 extra_images.objects.filter(id__in=deleted_images).delete()
             # Create the extra images
-            extra_images_data = [extra_images(img=img, product=product) for img in request.FILES.getlist('img')]
+            # extra_images_data = [extra_images(img=img, product=product) for img in request.FILES.getlist('img')]
+            # extra_images.objects.bulk_create(extra_images_data)
+            extra_images_data = []
+            for img in request.FILES.getlist('img'):
+                try:
+                    # Open the image file using the Image module
+                    image = Image.open(img)
+                    # If the image file was successfully opened, add it to the list of extra images
+                    extra_images_data.append(extra_images(img=img, product=product))
+                except OSError:
+                    messages.error(request, 'The file {} is not an image file'.format(img.name))
+                    pass
+            # Create the extra images in the database
             extra_images.objects.bulk_create(extra_images_data)
             # Update the product
             # Product.objects.filter(id=product.id).update(**form.cleaned_data)
@@ -263,7 +276,6 @@ def edit(request, id):
             product.condition = form.cleaned_data['condition']
             if request.FILES.get('image'):
                 # delete old image
-                print('yes i have image')
                 product.image.delete()
                 product.image = request.FILES.get('image')
             product.save()
