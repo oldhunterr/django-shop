@@ -5,7 +5,12 @@ Profile Page
 {% block extra_head %}
 <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-
+<style>
+    .card-img-top {
+    height: 200px; /* Adjust this value as needed */
+    object-fit: cover;
+}
+</style>
 {% endblock extra_head %}
 {% block content %}
 <div class="container-xl px-4 mt-4">
@@ -117,29 +122,29 @@ Profile Page
                 {% endfor %}
             </select>
             </div>
-        <div class="product_all card-deck row">
-        {% for item in user.products.all %}
-        <div class="col-xs-12 col-sm-6 col-md-3">
-            <div class="card" style="height: 440px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
-                <img src="media/{{item.image}}" class="card-img-top" alt="..." style="max-height: 200px">
-                <div class="card-body">
-                    <a href="{% url 'productview' item.id %}" class="stretched-link"><h5 class="card-title">{{item.name}}</h5></a>
+            <div class="product_all card-deck row">
+                {% for item in user.products.all %}
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="card mb-4" data-toggle="tooltip" data-placement="left" title="{{item.description}}">
+                        <img src="media/{{item.image}}" class="card-img-top img-fluid" alt="...">
+                        <div class="card-body">
+                            <a href="{% url 'productview' item.id %}" class="stretched-link"><h5 class="card-title text-truncate" style="max-height: 40px; overflow: hidden;">{{item.name}}</h5></a>
+                          </div>
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">{{item.price}}</li>
+                          <li class="list-group-item">{{item.category}}</li>
+                          <li class="list-group-item small">{{item.created_at}}</li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="{% url 'edit' item.id %}" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
+                        </div>
+                      </div>
                 </div>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">{{item.price}}</li>
-                  <li class="list-group-item">{{item.category}}</li>
-                  <li class="list-group-item small">{{item.created_at}}</li>
-                </ul>
-                <div class="card-body">
-                    <a href="{% url 'edit' item.id %}" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
+                {% endfor %}
+                </div>      
+                <div class="product_filtered card-deck row">  
+                    
                 </div>
-              </div>
-        </div>
-        {% endfor %}
-        </div>
-        <div class="product_filtered col-xs-12 col-sm-6 col-md-3">
-
-        </div>
     </div>
 </div>
 {% endblock content%} 
@@ -185,7 +190,7 @@ Profile Page
         .then(response => response.json())
         .then(data => {
             all_products.style.display = "none";
-            filtered_products.style.display = "block";
+            filtered_products.style.display = "flex";
             if (data.length===0)
             {
                 filtered_products.innerHTML = `
@@ -204,20 +209,22 @@ Profile Page
                 filtered_products.innerHTML = '';
                 data.forEach(item => {
                     filtered_products.innerHTML +=
-                    `<div class="card" style="height: 440px; margin-bottom:10px;" data-toggle="tooltip" data-placement="left" title="${item.description}">
-                        <img src="media/${item.image}" class="card-img-top" alt="..." style="max-height: 200px">
-                        <div class="card-body">
-                            <a href="/product/${item.id}" class="stretched-link"><h5 class="card-title">${item.name}</h5></a>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">${item.price}</li>
-                          <li class="list-group-item">${item.category}</li>
-                          <li class="list-group-item small">${item.created_at}</li>
-                        </ul>
-                        <div class="card-body">
-                            <a href="/product/${item.id}/edit" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
-                        </div>
-                      </div>`;
+                    `<div class="col-xs-12 col-sm-6 col-md-3">
+                        <div class="card mb-4" data-toggle="tooltip" data-placement="left" title="${item.description}">
+                            <img src="media/${item.image}" class="card-img-top img-fluid" alt="...">
+                            <div class="card-body">
+                                <a href="/product/${item.id}" class="stretched-link"><h5 class="card-title text-truncate" style="max-height: 40px; overflow: hidden;">${item.name}</h5></a>
+                              </div>
+                            <ul class="list-group list-group-flush">
+                              <li class="list-group-item">${item.price}</li>
+                              <li class="list-group-item">${item.category}</li>
+                              <li class="list-group-item small">${item.created_at}</li>
+                            </ul>
+                            <div class="card-body">
+                                <a href="/product/${item.id}/edit" style="z-index: 2;position: relative;bottom: 20%;width: 100%;" class="btn btn-primary btn-block">Edit</a>
+                            </div>
+                          </div>
+                    </div>`;
                 $('[data-toggle="tooltip"]').tooltip();
                 })
             }});

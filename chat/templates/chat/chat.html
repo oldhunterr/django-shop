@@ -74,6 +74,7 @@
       </div>
       <div class="messages">
         <ul id="chat-log">
+          {% if currentroom %}
           <li>
             <div class="row" style='display: flex; justify-content: center;'>
               <div class="col-lg-2 justify-content-center text-center">
@@ -88,6 +89,7 @@
               </div>
             </div>
           </li>
+          {% endif %}
         </ul>
       </div>
       <div class="message-input">
